@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitalis — نموذج تفاعلي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F3F7; --card:#FFF; --s2:#EDEEF2; --sep:#E3E4E9;
+  --tx:#16181D; --tx2:#5B6472; --tx3:#98A2B3;
+  --b50:#EBF6FE; --b500:#1FA8F8; --b600:#0E90DE; --b700:#0B76B8;
+  --g600:#0E9F6E; --g50:#E8F8F1;
+  --a600:#B54708; --a50:#FEF6E7;
+  --r600:#D92D20; --r50:#FEF3F2;
+  --gy:#667085;
+  --sh:0 4px 16px rgba(16,24,40,.08);
+  --shs:0 20px 50px rgba(16,24,40,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'IBM Plex Sans Arabic','IBM Plex Sans',-apple-system,'Segoe UI',sans-serif;
+  background:#0B0B0D;color:var(--tx);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:20px 16px 96px;
+}
+.num{font-family:'IBM Plex Sans',sans-serif;font-variant-numeric:tabular-nums}
+
+/* ═══ إطار الجهاز ═══ */
+.device{
+  width:100%;max-width:1120px;background:var(--bg);border-radius:16px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);position:relative;
+}
+.chrome{display:flex;align-items:center;gap:7px;padding:11px 15px;background:#E6E7EB;flex-shrink:0}
+.dot{width:11px;height:11px;border-radius:50%}
+.chrome-t{margin-inline-start:10px;font-size:12.5px;color:#7A828E;font-weight:500}
+.stage{height:660px;position:relative;overflow:hidden;background:var(--bg)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex;animation:fade .22s cubic-bezier(.2,0,0,1)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ═══ شريط علوي ═══ */
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:rgba(242,243,247,.82);
+  backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--sep);flex-shrink:0;z-index:10}
+.logo-badge{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1FA8F8,#0B76B8);
+  color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex-shrink:0}
+.clinic{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.searchbar{flex:1;max-width:330px;background:var(--s2);border-radius:9px;padding:7px 13px;
+  font-size:13.5px;color:var(--tx3);cursor:pointer;display:flex;align-items:center;gap:7px;transition:.12s}
+.searchbar:hover{background:var(--sep)}
+.kbd{margin-inline-start:auto;font-size:11px;background:var(--card);border-radius:5px;padding:1px 6px;
+  color:var(--tx3);font-family:'IBM Plex Sans'}
+.ico-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;cursor:pointer;
+  font-size:15px;position:relative;transition:.12s;border:none;background:transparent}
+.ico-btn:hover{background:var(--s2)}
+.pip{position:absolute;top:5px;left:6px;width:7px;height:7px;border-radius:50%;background:var(--a600)}
+
+/* ═══ التخطيط ═══ */
+.body{flex:1;display:flex;overflow:hidden}
+.side{width:186px;padding:14px 9px;flex-shrink:0;overflow-y:auto;border-inline-start:1px solid var(--sep)}
+.side-lb{font-size:10.5px;font-weight:600;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;
+  font-family:'IBM Plex Sans';padding:0 10px;margin:14px 0 5px}
+.side-lb:first-child{margin-top:0}
+.si{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13.5px;
+  cursor:pointer;transition:.12s;position:relative}
+.si:hover{background:var(--s2)}
+.si.on{background:var(--b50);color:var(--b600);font-weight:500}
+.si.done{color:var(--tx3)}
+.st{font-family:'IBM Plex Sans';font-size:12px;color:var(--tx3);width:36px;flex-shrink:0}
+.si.on .st{color:var(--b600)}
+.cnt{margin-inline-start:auto;background:var(--a600);color:#fff;font-size:10.5px;font-weight:600;
+  border-radius:999px;min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px;
+  font-family:'IBM Plex Sans'}
+.cnt.blue{background:var(--b600)}
+.main{flex:1;overflow-y:auto;padding:22px 26px}
+.main::-webkit-scrollbar,.side::-webkit-scrollbar{width:8px}
+.main::-webkit-scrollbar-thumb,.side::-webkit-scrollbar-thumb{background:#D8DAE0;border-radius:99px}
+
+/* ═══ نصوص ═══ */
+.h-lg{font-size:27px;font-weight:700;letter-spacing:-.022em;line-height:1.25}
+.h-md{font-size:19px;font-weight:600;letter-spacing:-.015em}
+.sub{font-size:13.5px;color:var(--tx2)}
+.lb{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;
+  font-family:'IBM Plex Sans';margin-bottom:7px}
+.sec-t{font-size:12.5px;font-weight:600;color:var(--tx2);padding:16px 4px 7px;display:flex;align-items:center;gap:7px}
+
+/* ═══ بطاقات ═══ */
+.card{background:var(--card);border-radius:14px;padding:17px 19px;margin-bottom:12px}
+.card.flat{padding:0;overflow:hidden}
+.row{display:flex;align-items:center;gap:13px;padding:13px 18px;position:relative;min-height:52px}
+.row+.row::before{content:'';position:absolute;top:0;right:18px;left:0;height:1px;background:var(--sep)}
+.row:hover{background:#FAFBFC}
+.rt{font-size:14.5px;font-weight:500}
+.rs{font-size:12.5px;color:var(--tx2);margin-top:1px}
+.grow{flex:1;min-width:0}
+
+/* ═══ أزرار ═══ */
+.btn{font-family:inherit;font-size:14.5px;font-weight:500;border:none;border-radius:10px;height:42px;
+  padding:0 20px;cursor:pointer;transition:.12s cubic-bezier(.2,0,0,1);white-space:nowrap}
+.btn:active{transform:scale(.975)}
+.pri{background:var(--b600);color:#fff}
+.pri:hover{background:var(--b700)}
+.sec{background:transparent;color:var(--b600)}
+.sec:hover{background:var(--b50)}
+.quiet{background:var(--s2);color:var(--tx2)}
+.quiet:hover{background:var(--sep)}
+.sm{height:32px;font-size:13px;padding:0 13px;border-radius:8px}
+.xl{height:48px;font-size:16px;border-radius:12px}
+
+/* ═══ حقول ═══ */
+.fld{width:100%;font-family:inherit;font-size:15px;color:var(--tx);background:var(--s2);
+  border:none;border-radius:10px;padding:11px 14px;outline:none;transition:box-shadow .12s}
+.fld:focus{box-shadow:0 0 0 3px rgba(31,168,248,.3)}
+textarea.fld{resize:none;line-height:1.85;font-size:15px}
+
+/* ═══ شارات ═══ */
+.bd{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;border-radius:999px;
+  padding:3.5px 10px;white-space:nowrap}
+.bg-g{background:var(--g50);color:var(--g600)}
+.bg-a{background:var(--a50);color:var(--a600)}
+.bg-b{background:var(--b50);color:var(--b600)}
+.bg-y{background:var(--s2);color:var(--gy)}
+.bg-r{background:var(--r50);color:var(--r600)}
+.alert{display:flex;align-items:center;gap:8px;background:var(--r50);color:var(--r600);
+  border-radius:10px;padding:8px 13px;font-size:13.5px;font-weight:500}
+.money{font-family:'IBM Plex Sans';font-variant-numeric:tabular-nums;font-weight:600}
+
+/* ═══ بطاقة التالي ═══ */
+.next{background:var(--card);border-radius:16px;padding:22px 24px;margin-top:16px;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--b50);color:var(--b600);
+  display:grid;place-items:center;font-size:19px;font-weight:600;flex-shrink:0}
+
+/* ═══ طبقات ═══ */
+.ov{position:absolute;inset:0;background:rgba(11,13,18,.34);backdrop-filter:blur(3px);
+  display:none;align-items:flex-end;justify-content:center;z-index:100}
+.ov.on{display:flex;animation:fade .18s}
+.ov.center{align-items:center}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:470px;
+  box-shadow:var(--shs);animation:up .26s cubic-bezier(.2,0,0,1);max-height:92%;overflow-y:auto}
+.ov.center .sheet{border-radius:18px;margin:0 16px;animation:pop .2s cubic-bezier(.2,0,0,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.grip{width:36px;height:5px;border-radius:99px;background:var(--sep);margin:11px auto 0}
+.sh-head{padding:13px 22px 15px;text-align:center}
+
+/* ═══ البحث ═══ */
+.searchpanel{background:var(--card);border-radius:16px;width:100%;max-width:520px;box-shadow:var(--shs);
+  overflow:hidden;animation:pop .2s cubic-bezier(.2,0,0,1)}
+.si-res{display:flex;align-items:center;gap:12px;padding:11px 18px;cursor:pointer}
+.si-res:hover{background:var(--b50)}
+
+/* ═══ إشعار صامت ═══ */
+.toast{position:absolute;bottom:20px;left:20px;background:var(--card);border-radius:14px;
+  padding:13px 16px;box-shadow:var(--shs);display:none;gap:11px;align-items:flex-start;
+  max-width:340px;z-index:90}
+.toast.on{display:flex;animation:tin .3s cubic-bezier(.2,0,0,1)}
+@keyframes tin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ═══ الوصفة المطبوعة ═══ */
+.paper{background:#fff;width:100%;max-width:400px;padding:26px 28px;border-radius:10px;
+  box-shadow:var(--shs);animation:pop .2s;color:#111}
+.ph{display:flex;gap:12px;align-items:flex-start;padding-bottom:11px;border-bottom:1.5px solid #222}
+.ph-logo{width:40px;height:40px;border-radius:9px;background:linear-gradient(135deg,#1FA8F8,#0B76B8);
+  color:#fff;display:grid;place-items:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* ═══ شريط العرض ═══ */
+.nav{position:fixed;bottom:0;right:0;left:0;background:rgba(20,22,26,.94);
+  backdrop-filter:blur(20px);padding:11px 16px;display:flex;gap:7px;justify-content:center;
+  flex-wrap:wrap;z-index:999;border-top:1px solid rgba(255,255,255,.09)}
+.nav b{color:#8A93A0;font-size:11px;font-weight:600;align-self:center;margin-inline-end:5px;
+  letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Sans'}
+.nav button{font-family:inherit;font-size:12.5px;font-weight:500;color:#C9CFD8;background:rgba(255,255,255,.08);
+  border:none;border-radius:8px;padding:7px 13px;cursor:pointer;transition:.13s}
+.nav button:hover{background:rgba(255,255,255,.16);color:#fff}
+.nav button.on{background:#1FA8F8;color:#fff}
+.hint{color:#6B7481;font-size:12px;text-align:center;margin-top:14px;max-width:600px}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="chrome">
+    <div class="dot" style="background:#FF5F57"></div>
+    <div class="dot" style="background:#FEBC2E"></div>
+    <div class="dot" style="background:#28C840"></div>
+    <span class="chrome-t" id="chromeT">Vitalis — عيادة الدكتور [اسم الطبيب]</span>
+  </div>
+
+  <div class="stage" id="stage">
+
+  <!-- ══════ ١ · الدخول ══════ -->
+  <div class="screen on" id="s-login" style="align-items:center;justify-content:center;background:#fff">
+    <div style="text-align:center;padding:20px">
+      <div style="width:76px;height:76px;border-radius:20px;background:linear-gradient(135deg,#1FA8F8,#0B76B8);
+        color:#fff;display:grid;place-items:center;font-size:29px;font-weight:700;margin:0 auto 20px">ع ش</div>
+      <div class="h-lg">عيادة الدكتور [اسم الطبيب]</div>
+      <div class="sub" style="margin-top:3px">اختصاصي جراحة عامة — حماة</div>
+
+      <div style="display:flex;gap:14px;justify-content:center;margin-top:34px">
+        <div onclick="go('s-morning')" style="background:var(--bg);border-radius:16px;padding:22px 30px;cursor:pointer;transition:.15s"
+             onmouseover="this.style.background='#E7E9EF'" onmouseout="this.style.background='var(--bg)'">
+          <div style="font-size:30px">👨‍⚕️</div>
+          <div style="font-weight:600;margin-top:7px">الطبيب</div>
+        </div>
+        <div onclick="go('s-sec')" style="background:var(--bg);border-radius:16px;padding:22px 30px;cursor:pointer;transition:.15s"
+             onmouseover="this.style.background='#E7E9EF'" onmouseout="this.style.background='var(--bg)'">
+          <div style="font-size:30px">💼</div>
+          <div style="font-weight:600;margin-top:7px">السكرتيرة</div>
+        </div>
+      </div>
+
+      <div style="margin-top:60px;font-size:11.5px;color:var(--tx3);font-family:'IBM Plex Sans';letter-spacing:.04em">
+        Vitalis · تصميم د. علاء شاكر — حماة، سوريا
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ٢ · صباح الطبيب ══════ -->
+  <div class="screen" id="s-morning" style="align-items:center;justify-content:center;background:#fff">
+    <div style="width:100%;max-width:470px;padding:24px">
+      <div class="sub">صباح الخير، دكتور</div>
+      <div class="h-lg" style="margin-bottom:4px">قبل أن تبدأ</div>
+      <div class="sub" style="margin-bottom:18px">٣ أمور تحتاج انتباهك</div>
+
+      <div class="card flat">
+        <div class="row"><span style="font-size:16px">🔴</span>
+          <div class="grow"><div class="rt">سلمى حداد</div><div class="rs">طلب تحاليل منذ ٢١ يومًا — لم تصل النتيجة</div></div>
+        </div>
+        <div class="row"><span style="font-size:16px">🔴</span>
+          <div class="grow"><div class="rt">مروان علي</div><div class="rs">عملية مقررة بلا موعد منذ ٣٠ يومًا</div></div>
+        </div>
+        <div class="row"><span style="font-size:16px">🟡</span>
+          <div class="grow"><div class="rt">ريم خوري</div><div class="rs">دين ٢٠٬٠٠٠ منذ ١٠ أيام</div></div>
+        </div>
+      </div>
+
+      <button class="btn pri xl" style="width:100%;margin-top:16px" onclick="go('s-today')">ابدأ اليوم</button>
+      <div style="text-align:center;font-size:12px;color:var(--tx3);margin-top:10px">تظهر مرة واحدة صباحًا · Esc يتخطاها</div>
+    </div>
+  </div>
+
+  <!-- ══════ ٣ · اليوم ══════ -->
+  <div class="screen" id="s-today">
+    <div class="top">
+      <div class="logo-badge">ع ش</div>
+      <div class="clinic">عيادة د. [اسم الطبيب]</div>
+      <div class="searchbar" onclick="ov('ov-search')">🔍 ابحث عن مريض… <span class="kbd">⌘K</span></div>
+      <button class="ico-btn" onclick="ov('ov-search')">🔍</button>
+      <button class="ico-btn" onclick="showToast()">🔔<span class="pip"></span></button>
+    </div>
+    <div class="body">
+      <div class="main">
+        <div class="h-lg">السبت ٨ آب</div>
+        <div class="sub">٧ مرضى · ٣ انتهوا · <span class="money">420,000</span> ل.س</div>
+
+        <div class="lb" style="margin-top:22px">التالي</div>
+        <div class="next">
+          <div class="avatar">ن ش</div>
+          <div class="grow" style="min-width:180px">
+            <div class="h-md">سامر الأحمد</div>
+            <div class="sub">٤٢ سنة · مراجعة · ينتظر منذ ١٢ دقيقة</div>
+            <div class="alert" style="margin-top:9px">⚠ حساسية بنسلين · مميعات دم</div>
+          </div>
+          <button class="btn pri xl" onclick="go('s-patient')">ابدأ الزيارة</button>
+        </div>
+
+        <div class="lb" style="margin-top:24px">تحتاج انتباهك</div>
+        <div class="card flat">
+          <div class="row"><span>⏳</span><div class="grow"><div class="rt">سلمى حداد — نتيجة لم تصل</div><div class="rs">منذ ٢١ يومًا</div></div><span class="bd bg-a">متأخر</span></div>
+          <div class="row"><span>📅</span><div class="grow"><div class="rt">مروان علي — عملية بلا موعد</div><div class="rs">منذ ٣٠ يومًا</div></div><span class="bd bg-a">متأخر</span></div>
+          <div class="row"><span>✎</span><div class="grow"><div class="rt">زيارة غير مكتملة — أحمد عيسى</div><div class="rs">مسودة من أمس</div></div><span class="bd bg-y">مسودة</span></div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="side-lb">اليوم</div>
+        <div class="si done"><span class="st">9:00</span><span>أحمد عيسى</span><span style="margin-inline-start:auto;color:var(--g600)">✓</span></div>
+        <div class="si on"><span class="st">9:30</span><span>سامر الأحمد</span></div>
+        <div class="si"><span class="st">10:00</span><span>سلمى حداد</span></div>
+        <div class="si"><span class="st">10:30</span><span>يوسف مراد</span></div>
+        <div class="si"><span class="st">11:00</span><span>ليلى نصر</span></div>
+        <div class="side-lb">المتابعة</div>
+        <div class="si" onclick="go('s-pending')"><span>⏳ تحتاج انتباهك</span><span class="cnt">3</span></div>
+        <div class="si"><span>💰 الصندوق</span></div>
+      </div>
+    </div>
+    <div class="toast" id="toast">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--a600);margin-top:7px;flex-shrink:0"></div>
+      <div><div style="font-size:14px;font-weight:500">ريم خوري — قبض ناقص</div>
+      <div class="num" style="font-size:12.5px;color:var(--tx2);margin-top:1px">المستحق 50,000 · قُبض 30,000 · الفرق 20,000</div></div>
+    </div>
+  </div>
+
+  <!-- ══════ ٤ · ملف المريض ══════ -->
+  <div class="screen" id="s-patient">
+    <div class="top">
+      <button class="ico-btn" onclick="go('s-today')">→</button>
+      <div class="logo-badge">ع ش</div>
+      <div class="clinic">سامر الأحمد</div>
+      <div class="searchbar" onclick="ov('ov-search')">🔍 ابحث… <span class="kbd">⌘K</span></div>
+      <button class="ico-btn">⋯</button>
+    </div>
+    <div class="body">
+      <div class="main">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="h-lg">سامر الأحمد</span>
+          <span class="num sub">٤٢ سنة · ذكر · 0991234567 · ملف 1247</span>
+        </div>
+        <div class="alert" style="margin-top:9px">⚠ حساسية بنسلين · مميعات دم</div>
+
+        <div class="card" style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="bd bg-b">📁 فتق إربي أيمن</span>
+          <span class="sub">حالة مفتوحة منذ ٢٠ يومًا</span>
+          <button class="btn sec sm" style="margin-inline-start:auto">حالة جديدة</button>
+        </div>
+
+        <div class="card">
+          <div class="lb">آخر زيارة — ٢٤ تموز · مراجعة</div>
+          <div style="font-size:14.5px;line-height:1.75">طلبت تحاليل ما قبل العملية. يراجع بالنتائج خلال أسبوع.</div>
+          <div style="margin-top:10px"><span class="bd bg-a">⏳ طلب خارجي — لم تصل النتيجة</span></div>
+        </div>
+
+        <div class="card" style="border:1.5px solid var(--b100,#D3EBFD)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+            <span class="lb" style="margin:0">✎ التقاط سريع — الزيارة الجارية</span>
+            <span class="sub" style="margin-inline-start:auto;font-size:12px" id="saveState">حُفظت الآن</span>
+          </div>
+          <textarea class="fld" id="capture" rows="4" style="background:transparent;padding:0"
+            oninput="typing()">أحضر التحاليل — الخضاب 13.2، التخثر طبيعي
+الجرح القديم سليم
+مؤهل للعملية — نحدد موعدًا</textarea>
+
+          <div id="distribute" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--sep)">
+            <div class="lb">وزّع الأسطر على الحقول — اختياري</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn quiet sm">شكوى</button>
+              <button class="btn quiet sm">فحص</button>
+              <button class="btn quiet sm">تشخيص</button>
+              <button class="btn quiet sm">خطة</button>
+            </div>
+            <div class="sub" style="font-size:12.5px;margin-top:9px">إن لم توزّع شيئًا، يبقى النص كاملًا كسجل صالح.</div>
+          </div>
+
+          <div style="display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;align-items:center">
+            <button class="btn quiet sm" onclick="toggleDist()">وزّع على الحقول</button>
+            <button class="btn quiet sm">+ إجراء في العيادة</button>
+            <span class="grow"></span>
+            <button class="btn pri" onclick="ov('ov-close')">إنهاء الزيارة</button>
+          </div>
+        </div>
+
+        <div class="lb" style="margin-top:20px">الزيارات السابقة</div>
+        <div class="card flat">
+          <div class="row"><span class="num st" style="width:64px">١٠ تموز</span><div class="grow"><div class="rt">كشف</div></div><span class="bd bg-y">فتق إربي</span></div>
+          <div class="row"><span class="num st" style="width:64px">٢ حزيران</span><div class="grow"><div class="rt">زيارة قصيرة — ضماد</div></div><span class="bd bg-g">مشمول</span></div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="side-lb">اليوم</div>
+        <div class="si done"><span class="st">9:00</span><span>أحمد عيسى</span><span style="margin-inline-start:auto;color:var(--g600)">✓</span></div>
+        <div class="si on"><span class="st">9:30</span><span>سامر الأحمد</span></div>
+        <div class="si"><span class="st">10:00</span><span>سلمى حداد</span></div>
+        <div class="si"><span class="st">10:30</span><span>يوسف مراد</span></div>
+        <div class="side-lb">المتابعة</div>
+        <div class="si" onclick="go('s-pending')"><span>⏳ تحتاج انتباهك</span><span class="cnt">3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ٥ · المعلّقات ══════ -->
+  <div class="screen" id="s-pending">
+    <div class="top">
+      <button class="ico-btn" onclick="go('s-today')">→</button>
+      <div class="logo-badge">ع ش</div>
+      <div class="clinic">تحتاج انتباهك</div>
+    </div>
+    <div class="body"><div class="main">
+      <div class="h-lg">تحتاج انتباهك</div>
+      <div class="sub">٧ التزامات مفتوحة</div>
+
+      <div class="sec-t" style="color:var(--r600)">🔴 متأخر (٢)</div>
+      <div class="card flat">
+        <div class="row"><div class="grow"><div class="rt">سلمى حداد</div><div class="rs">طلب تحاليل منذ ٢١ يومًا</div></div>
+          <button class="btn sec sm">تأجيل</button><button class="btn quiet sm">فتح</button></div>
+        <div class="row"><div class="grow"><div class="rt">مروان علي</div><div class="rs">عملية مقررة بلا موعد · ٣٠ يومًا</div></div>
+          <button class="btn sec sm">تأجيل</button><button class="btn quiet sm">فتح</button></div>
+      </div>
+
+      <div class="sec-t" style="color:var(--a600)">🟡 هذا الأسبوع (٢)</div>
+      <div class="card flat">
+        <div class="row"><div class="grow"><div class="rt">يوسف مراد</div><div class="rs">وصلت النتيجة ولم تُراجَع</div></div>
+          <span class="bd bg-b">جديد</span><button class="btn quiet sm">فتح</button></div>
+        <div class="row"><div class="grow"><div class="rt">ريم خوري</div><div class="rs">دين ٢٠٬٠٠٠ منذ ١٠ أيام</div></div>
+          <button class="btn quiet sm">فتح</button></div>
+      </div>
+
+      <div class="sec-t">✎ زيارات غير مكتملة (١)</div>
+      <div class="card flat">
+        <div class="row"><div class="grow"><div class="rt">أحمد عيسى</div><div class="rs">مسودة من أمس</div></div>
+          <button class="btn quiet sm">أكمل</button></div>
+      </div>
+
+      <div class="sec-t">💰 فروقات لم تُراجَع (٣)</div>
+      <div class="card flat">
+        <div class="row"><div class="grow"><div class="rt">٣ فروقات اليوم</div><div class="rs num">مجموعها 45,000 ل.س</div></div>
+          <button class="btn pri sm">مراجعة</button></div>
+      </div>
+
+      <div class="card flat" style="margin-top:14px;opacity:.6">
+        <div class="row"><div class="grow"><div class="rt">٤ مؤجّلة</div><div class="rs">تعود في مواعيدها</div></div><span>▸</span></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ══════ ٦ · السكرتيرة ══════ -->
+  <div class="screen" id="s-sec">
+    <div class="top">
+      <button class="ico-btn" onclick="go('s-login')">→</button>
+      <div class="logo-badge" style="background:linear-gradient(135deg,#667085,#475467)">ع ش</div>
+      <div class="clinic">الاستقبال</div>
+      <div class="searchbar" onclick="ov('ov-search')">🔍 ابحث باسم أو رقم…</div>
+      <button class="btn pri sm">+ مريض جديد</button>
+    </div>
+    <div class="body">
+      <div class="main">
+        <div class="h-lg">اليوم</div>
+        <div class="sub">السبت ٨ آب · ٧ مرضى · ٣ انتهوا · <span class="money">420,000</span> ل.س</div>
+
+        <div class="sec-t" style="color:var(--a600)">⚠ انتهى — لم يُحاسب (١)</div>
+        <div class="card flat">
+          <div class="row"><span class="num st">8:30</span><div class="grow"><div class="rt">ريم خوري</div></div>
+            <span class="bd bg-y">كشف</span><span class="money">50,000</span>
+            <button class="btn pri sm" onclick="ov('ov-pay')">قبض</button></div>
+        </div>
+
+        <div class="sec-t">● في الانتظار (٢) — اسحب لترتيب الدور</div>
+        <div class="card flat">
+          <div class="row"><span style="color:var(--tx3);cursor:grab">⠿</span><span class="num st">9:30</span>
+            <div class="grow"><div class="rt">سامر الأحمد</div></div><span class="bd bg-b">مراجعة</span>
+            <span class="sub" style="font-size:12px">ينتظر ١٢ د</span></div>
+          <div class="row"><span style="color:var(--tx3);cursor:grab">⠿</span><span class="num st">10:00</span>
+            <div class="grow"><div class="rt">سلمى حداد</div></div><span class="bd bg-y">كشف</span>
+            <span class="sub" style="font-size:12px">ينتظر ٤ د</span></div>
+        </div>
+
+        <div class="sec-t">◐ عند الطبيب (١)</div>
+        <div class="card flat">
+          <div class="row"><span class="num st">9:00</span><div class="grow"><div class="rt">أحمد عيسى</div></div>
+            <span class="bd bg-b">ضماد</span><span class="bd bg-g">مشمول</span></div>
+        </div>
+
+        <div class="sec-t">○ لم يصل بعد (٣)</div>
+        <div class="card flat">
+          <div class="row"><span class="num st">11:00</span><div class="grow"><div class="rt">يوسف مراد</div></div>
+            <span class="bd bg-b">مراجعة</span><button class="btn quiet sm">وصل</button></div>
+          <div class="row"><span class="num st">11:30</span><div class="grow"><div class="rt">ليلى نصر</div></div>
+            <span class="bd bg-y">كشف</span><button class="btn quiet sm">وصل</button></div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="si on">● اليوم</div>
+        <div class="si">📅 التقويم</div>
+        <div class="si">☎ اتصالات الغد<span class="cnt blue">5</span></div>
+        <div class="si">💰 الصندوق</div>
+        <div class="si">📋 الديون<span class="cnt">4</span></div>
+        <div class="si">🕐 قائمة الانتظار<span class="cnt blue">3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ الطبقات ══════ -->
+
+  <!-- بطاقة الاختتام -->
+  <div class="ov" id="ov-close" onclick="if(event.target===this)closeOv()">
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="sh-head">
+        <div class="h-md">إنهاء زيارة سامر الأحمد</div>
+        <div class="sub">مراجعة · السبت ٨ آب</div>
+      </div>
+      <div class="row"><div class="grow"><div class="rt">💊 الوصفة</div><div class="rs">اختياري</div></div>
+        <button class="btn sec sm" onclick="ov('ov-rx')">+ إضافة</button></div>
+      <div class="row"><div class="grow"><div class="rt">🧪 طلبات خارجية</div><div class="rs">اختياري</div></div>
+        <button class="btn sec sm">+ إضافة</button></div>
+      <div class="row"><div class="grow"><div class="rt">📅 الموعد القادم</div><div class="rs">اقتراح ذكي</div></div>
+        <span class="bd bg-b">بعد أسبوع ▾</span></div>
+      <div class="row"><div class="grow"><div class="rt">💰 المبلغ المستحق</div>
+        <div class="rs" style="color:var(--r600)">إلزامي — لا يمكن تركه فارغًا</div></div>
+        <input class="fld num" id="amt" value="50,000" style="width:112px;text-align:center;font-weight:600"></div>
+      <div style="padding:16px 20px;display:flex;gap:8px;align-items:center">
+        <button class="btn pri" style="flex:1" onclick="finish()">إنهاء وطباعة</button>
+        <button class="btn sec" onclick="finish()">إنهاء فقط</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- الوصفة -->
+  <div class="ov" id="ov-rx" onclick="if(event.target===this)back('ov-close')">
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="sh-head"><div class="h-md">وصفة سامر الأحمد</div></div>
+      <div style="padding:0 20px 12px"><input class="fld" placeholder="🔍 ابحث عن دواء… (عربي أو لاتيني)"></div>
+      <div class="lb" style="padding:0 20px">⭐ قوالبي — الأسرع</div>
+      <div class="row" style="cursor:pointer" onclick="addRx()"><div class="grow"><div class="rt">ما بعد عملية فتق</div><div class="rs">٤ أدوية</div></div><span class="bd bg-b">تطبيق</span></div>
+      <div class="row" style="cursor:pointer" onclick="addRx()"><div class="grow"><div class="rt">التهاب جرح</div><div class="rs">٣ أدوية</div></div><span class="bd bg-b">تطبيق</span></div>
+      <div class="lb" style="padding:16px 20px 0">أدويتي</div>
+      <div class="row" style="cursor:pointer" onclick="addRx()"><div class="grow"><div class="rt">أوغمنتين ١ غ <span style="color:var(--tx3);font-size:12.5px">(Augmentin)</span></div><div class="rs">حبة مرتين يوميًا · ٧ أيام</div></div></div>
+      <div class="row" style="cursor:pointer" onclick="addRx()"><div class="grow"><div class="rt">بروفين ٦٠٠</div><div class="rs">حبة ٣ مرات يوميًا · ٥ أيام</div></div></div>
+      <div style="padding:16px 20px;display:flex;gap:8px">
+        <button class="btn pri" style="flex:1" onclick="back('ov-close')">تم</button>
+        <button class="btn sec" onclick="back('ov-close')">حفظ كقالب</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- القبض -->
+  <div class="ov" id="ov-pay" onclick="if(event.target===this)closeOv()">
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="sh-head"><div class="h-md">قبض من ريم خوري</div></div>
+      <div style="padding:4px 24px 20px;text-align:center">
+        <div class="lb">المستحق</div>
+        <div class="money" style="font-size:31px">50,000 <span style="font-size:16px;font-weight:400;color:var(--tx2)">ل.س</span></div>
+        <div class="lb" style="margin-top:20px">المقبوض</div>
+        <input class="fld num" value="50,000" style="text-align:center;font-size:21px;font-weight:600">
+        <div class="sub" style="font-size:12.5px;margin-top:9px">أي مبلغ مقبول · الفرق يصبح دينًا تلقائيًا ويُبلَّغ الطبيب</div>
+        <button class="btn pri xl" style="width:100%;margin-top:16px" onclick="closeOv()">تأكيد القبض</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- البحث -->
+  <div class="ov center" id="ov-search" onclick="if(event.target===this)closeOv()">
+    <div class="searchpanel">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--sep);display:flex;align-items:center;gap:10px">
+        <span>🔍</span><span style="font-size:16px">نبيل</span>
+        <span style="width:1.5px;height:19px;background:var(--b500);animation:bl 1s infinite"></span>
+      </div>
+      <div class="lb" style="padding:12px 18px 4px">المرضى</div>
+      <div class="si-res" onclick="closeOv();go('s-patient')">
+        <div class="avatar" style="width:34px;height:34px;font-size:13px">ن ش</div>
+        <div class="grow"><div class="rt">سامر الأحمد</div><div class="rs num">٤٢ سنة · 0991234567 · ملف 1247</div></div>
+        <span class="bd bg-a">دين 20,000</span>
+      </div>
+      <div class="si-res">
+        <div class="avatar" style="width:34px;height:34px;font-size:13px;background:var(--s2);color:var(--gy)">ن ح</div>
+        <div class="grow"><div class="rt">نبيل حداد</div><div class="rs num">٣٥ سنة · 0998888888</div></div>
+      </div>
+      <div class="lb" style="padding:12px 18px 4px">التشخيصات</div>
+      <div class="si-res"><span>🩺</span><div class="grow"><div class="rt">فتق إربي</div><div class="rs">١٢ مريضًا</div></div></div>
+      <div class="lb" style="padding:12px 18px 4px">أفعال سريعة</div>
+      <div class="si-res"><span>＋</span><div class="grow"><div class="rt">مريض جديد باسم «نبيل»</div></div></div>
+      <div style="padding:11px 18px;background:var(--bg);font-size:12px;color:var(--tx3)">
+        ↑↓ للتنقل · Enter للفتح · Esc للإغلاق
+      </div>
+    </div>
+  </div>
+
+  <!-- الوصفة المطبوعة -->
+  <div class="ov center" id="ov-print" onclick="if(event.target===this)closeOv()">
+    <div style="width:100%;max-width:400px">
+    <div class="paper">
+      <div class="ph">
+        <div class="ph-logo">ع ش</div>
+        <div>
+          <div style="font-size:15px;font-weight:600">عيادة الدكتور [اسم الطبيب]</div>
+          <div style="font-size:10.5px;color:#555">اختصاصي جراحة عامة</div>
+          <div style="font-size:9.5px;color:#666;font-family:'IBM Plex Sans'">حماة — شارع العلمين · 0991 234 567</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:11px;color:#333">
+        <span>الاسم: سامر الأحمد · ٤٢ سنة</span><span class="num">ملف 1247 · 2026/08/08</span>
+      </div>
+      <div style="text-align:center;font-size:15px;font-weight:600;margin:16px 0 12px">الوصفة</div>
+      <div style="font-size:12.5px;line-height:1.5">
+        <div style="margin-bottom:13px"><b>١· أوغمنتين ١ غ</b> <span style="color:#666;font-size:11px">(Augmentin 1g)</span>
+          <div style="color:#333;margin-top:1px">حبة مرتين يوميًا لمدة أسبوع</div></div>
+        <div style="margin-bottom:13px"><b>٢· بروفين ٦٠٠</b>
+          <div style="color:#333;margin-top:1px">حبة ثلاث مرات يوميًا بعد الطعام · ٥ أيام</div></div>
+        <div style="margin-bottom:13px"><b>٣· أوميبرازول ٢٠</b>
+          <div style="color:#333;margin-top:1px">حبة صباحًا على الريق · ١٠ أيام</div></div>
+      </div>
+      <div style="border-top:1px solid #DDD;margin-top:14px;padding-top:9px;font-size:11.5px;color:#333">
+        ملاحظات: تجنب رفع الأثقال أسبوعين
+      </div>
+      <div style="text-align:left;margin-top:26px;font-size:11px;color:#555">
+        د. [اسم الطبيب]<div style="margin-top:16px">ــــــــــــــــــ</div>
+      </div>
+      <div style="border-top:1px solid #EEE;margin-top:14px;padding-top:6px;text-align:center;
+        font-size:7.5px;color:#AAA;font-family:'IBM Plex Sans';letter-spacing:.03em">
+        Vitalis · تصميم د. علاء شاكر — حماة، سوريا
+      </div>
+    </div>
+    <button class="btn pri" style="width:100%;margin-top:12px" onclick="closeOv();go('s-today')">تم — العودة لليوم</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<div class="hint">نموذج تفاعلي مبدئي · اضغط على الأزرار للتنقل بين الشاشات · الشعار مؤقت بانتظار شعار العيادة</div>
+
+<div class="nav">
+  <b>مسار العرض</b>
+  <button onclick="go('s-login')" id="n-s-login">١· الدخول</button>
+  <button onclick="go('s-morning')" id="n-s-morning">٢· الصباح</button>
+  <button onclick="go('s-today')" id="n-s-today">٣· اليوم</button>
+  <button onclick="go('s-patient')" id="n-s-patient">٤· المريض</button>
+  <button onclick="ov('ov-close')">٥· الاختتام</button>
+  <button onclick="go('s-pending')" id="n-s-pending">٦· المعلّقات</button>
+  <button onclick="go('s-sec')" id="n-s-sec">٧· السكرتيرة</button>
+  <button onclick="ov('ov-print')">٨· الوصفة</button>
+</div>
+
+<style>@keyframes bl{0%,49%{opacity:1}50%,100%{opacity:0}}</style>
+
+<script>
+let cur='s-login';
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'));
+  cur=id;
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+  const n=document.getElementById('n-'+id); if(n)n.classList.add('on');
+  const t={'s-login':'Vitalis — تسجيل الدخول','s-morning':'Vitalis — صباح الخير',
+    's-today':'Vitalis — اليوم','s-patient':'Vitalis — ملف المريض',
+    's-pending':'Vitalis — تحتاج انتباهك','s-sec':'Vitalis — الاستقبال'};
+  document.getElementById('chromeT').textContent=t[id]||'Vitalis';
+  document.querySelectorAll('.main').forEach(m=>m.scrollTop=0);
+}
+function ov(id){document.getElementById(id).classList.add('on')}
+function closeOv(){document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'))}
+function back(id){closeOv();ov(id)}
+function finish(){closeOv();ov('ov-print')}
+function toggleDist(){
+  const d=document.getElementById('distribute');
+  d.style.display=d.style.display==='none'?'block':'none';
+}
+let tmr;
+function typing(){
+  const s=document.getElementById('saveState');
+  s.textContent='يُحفظ…';clearTimeout(tmr);
+  tmr=setTimeout(()=>s.textContent='حُفظت الآن',700);
+}
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),6000);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeOv();
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();ov('ov-search')}
+});
+go('s-login');
+</script>
+</body>
+</html>

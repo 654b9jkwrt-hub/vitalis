@@ -1,0 +1,38 @@
+{
+  "name": "vitalis",
+  "version": "1.0.0",
+  "description": "Vitalis — نظام مفتوح المصدر لإدارة عيادة طبية (جراحة عامة)",
+  "author": "Dr. Alaa Shaker — Hama, Syria",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on tcp:5199 && electron .\"",
+    "build": "vite build",
+    "start": "npm run build && electron .",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.0.3",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "sy.hama.vitalis",
+    "productName": "Vitalis",
+    "directories": { "output": "release" },
+    "files": ["electron/**/*", "dist/**/*", "package.json"],
+    "mac": { "target": "dmg", "category": "public.app-category.medical" },
+    "win": { "target": "nsis" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
+  }
+}

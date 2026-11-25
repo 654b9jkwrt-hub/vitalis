@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitalis — نظام التصميم البصري</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F3F7; --card:#FFFFFF; --surface2:#EDEEF2; --sep:#E3E4E9;
+  --text:#16181D; --text2:#5B6472; --text3:#98A2B3;
+  --blue50:#EBF6FE; --blue100:#D3EBFD; --blue500:#1FA8F8; --blue600:#0E90DE; --blue700:#0B76B8;
+  --green600:#0E9F6E; --green50:#E8F8F1;
+  --amber600:#B54708; --amber50:#FEF6E7;
+  --red600:#D92D20; --red50:#FEF3F2;
+  --gray500:#667085;
+  --shadow-pop:0 4px 16px rgba(16,24,40,.08);
+  --shadow-sheet:0 20px 50px rgba(16,24,40,.16);
+  --seg-shadow:0 1px 3px rgba(16,24,40,.10);
+}
+html.dark{
+  --bg:#0B0B0D; --card:#131519; --surface2:#1B1E24; --sep:#282C34;
+  --text:#F6F8FB; --text2:#98A2B3; --text3:#667085;
+  --blue50:#0E2438; --blue100:#123453; --blue500:#1FA8F8; --blue600:#3CB6FF; --blue700:#69C6FF;
+  --green600:#3DD9A0; --green50:#0D2A21;
+  --amber600:#F2A742; --amber50:#2E1F0C;
+  --red600:#FF6B5E; --red50:#301412;
+  --shadow-pop:0 4px 16px rgba(0,0,0,.5);
+  --shadow-sheet:0 20px 50px rgba(0,0,0,.6);
+  --seg-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'IBM Plex Sans Arabic','IBM Plex Sans',-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--text);
+  font-size:15px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  transition:background .25s cubic-bezier(.2,0,0,1), color .25s cubic-bezier(.2,0,0,1);
+}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 24px 80px}
+.num{font-family:'IBM Plex Sans',sans-serif;font-variant-numeric:tabular-nums}
+
+/* ── رأس الصفحة ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--sep);
+}
+.topbar-in{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-name{font-size:19px;font-weight:600;letter-spacing:-.01em}
+.brand-sub{font-size:12px;color:var(--text3);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Sans',sans-serif}
+.spacer{flex:1}
+.mode-btn{
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--text);
+  background:var(--surface2);border:none;border-radius:999px;
+  padding:8px 16px;cursor:pointer;transition:all .12s;
+}
+.mode-btn:hover{background:var(--sep)}
+
+/* ── العناوين ── */
+h1{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin:40px 0 6px}
+h2{font-size:13px;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;
+   font-family:'IBM Plex Sans',sans-serif;margin:44px 0 12px}
+h3{font-size:17px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.lead{color:var(--text2);font-size:15px;margin-bottom:8px}
+.note{font-size:13.5px;color:var(--text3);margin-top:10px;line-height:1.7}
+
+/* ── المجموعة (بطاقة Apple) ── */
+.group{background:var(--card);border-radius:14px;overflow:hidden}
+.group-pad{padding:20px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 20px;min-height:52px;position:relative}
+.row+.row::before{content:'';position:absolute;top:0;right:20px;left:0;height:1px;background:var(--sep)}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:15px;font-weight:500;line-height:1.4}
+.row-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-top:1px}
+
+/* ── الشبكات ── */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+
+/* ── الألوان ── */
+.sw{border-radius:14px;overflow:hidden;background:var(--card)}
+.sw-chip{height:76px}
+.sw-txt{padding:10px 13px}
+.sw-name{font-size:13.5px;font-weight:500}
+.sw-hex{font-size:12px;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;letter-spacing:.02em}
+
+/* ── الأزرار ── */
+.btn{font-family:inherit;font-size:15px;font-weight:500;border:none;border-radius:10px;
+     height:44px;padding:0 20px;cursor:pointer;transition:all .12s cubic-bezier(.2,0,0,1)}
+.btn-primary{background:var(--blue600);color:#fff}
+.btn-primary:hover{background:var(--blue700)}
+.btn-secondary{background:transparent;color:var(--blue600)}
+.btn-secondary:hover{background:var(--blue50)}
+.btn-quiet{background:transparent;color:var(--text2)}
+.btn-danger{background:transparent;color:var(--red600)}
+.btn-sm{height:34px;font-size:13.5px;padding:0 14px;border-radius:8px}
+
+/* ── الحقول ── */
+.field{width:100%;font-family:inherit;font-size:15px;color:var(--text);
+  background:var(--surface2);border:none;border-radius:10px;padding:12px 14px;outline:none;
+  transition:box-shadow .12s}
+.field:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue500) 30%,transparent)}
+textarea.field{resize:vertical;line-height:1.8;min-height:120px}
+
+/* ── الشارات ── */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;
+  border-radius:999px;padding:4px 11px;white-space:nowrap}
+.b-green{background:var(--green50);color:var(--green600)}
+.b-amber{background:var(--amber50);color:var(--amber600)}
+.b-blue{background:var(--blue50);color:var(--blue600)}
+.b-gray{background:var(--surface2);color:var(--gray500)}
+.b-red{background:var(--red50);color:var(--red600)}
+
+/* ── تحذير طبي ── */
+.alert{display:flex;align-items:center;gap:8px;background:var(--red50);color:var(--red600);
+  border-radius:10px;padding:9px 13px;font-size:13.5px;font-weight:500}
+
+/* ── شريط المقاطع ── */
+.seg{display:inline-flex;background:var(--surface2);border-radius:10px;padding:3px;gap:2px}
+.seg button{font-family:inherit;font-size:13.5px;font-weight:500;color:var(--text2);
+  background:transparent;border:none;border-radius:8px;padding:7px 18px;cursor:pointer;transition:all .15s}
+.seg button.on{background:var(--card);color:var(--text);box-shadow:var(--seg-shadow)}
+
+/* ── المفتاح ── */
+.toggle{width:51px;height:31px;border-radius:999px;background:var(--sep);position:relative;
+  cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green600)}
+.toggle::after{content:'';position:absolute;top:2px;right:2px;width:27px;height:27px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s cubic-bezier(.2,0,0,1)}
+.toggle.on::after{transform:translateX(-20px)}
+
+/* ── نماذج الشاشات ── */
+.mock{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-pop)}
+.mock-chrome{display:flex;align-items:center;gap:7px;padding:11px 15px;background:var(--surface2)}
+.dot{width:11px;height:11px;border-radius:50%}
+.mock-title{margin-inline-start:8px;font-size:12.5px;color:var(--text3);font-weight:500}
+.mock-body{display:flex;min-height:430px;background:var(--bg)}
+.side{width:172px;background:var(--card);padding:14px 10px;flex-shrink:0}
+.side-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.08em;
+  text-transform:uppercase;font-family:'IBM Plex Sans',sans-serif;padding:0 10px;margin:12px 0 6px}
+.side-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;
+  font-size:13.5px;cursor:pointer;transition:background .12s}
+.side-item:hover{background:var(--surface2)}
+.side-item.on{background:var(--blue50);color:var(--blue600);font-weight:500}
+.side-time{font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--text3);width:34px}
+.side-count{margin-inline-start:auto;background:var(--amber600);color:#fff;font-size:11px;
+  font-weight:600;border-radius:999px;min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px}
+.main{flex:1;padding:20px;overflow:hidden}
+
+.pt-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pt-name{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.pt-meta{font-size:13.5px;color:var(--text2);font-family:'IBM Plex Sans',sans-serif}
+.card-mini{background:var(--card);border-radius:14px;padding:15px 17px;margin-top:12px}
+.card-label{font-size:11.5px;font-weight:600;color:var(--text3);letter-spacing:.07em;
+  text-transform:uppercase;font-family:'IBM Plex Sans',sans-serif;margin-bottom:7px}
+.quote{font-size:14.5px;line-height:1.75;color:var(--text)}
+
+/* قائمة اليوم عند السكرتيرة */
+.sec-row{display:flex;align-items:center;gap:12px;padding:12px 16px;position:relative;background:var(--card)}
+.sec-row+.sec-row::before{content:'';position:absolute;top:0;right:16px;left:0;height:1px;background:var(--sep)}
+.drag{color:var(--text3);cursor:grab;font-size:15px;line-height:1;user-select:none}
+.sec-name{font-size:14.5px;font-weight:500;flex:1}
+.sec-time{font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text2);width:44px}
+.money{font-family:'IBM Plex Sans',sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:15px}
+.sec-group-title{font-size:12.5px;font-weight:600;color:var(--text2);padding:14px 4px 7px;display:flex;align-items:center;gap:7px}
+
+/* الإشعار الصامت */
+.toast{background:var(--card);border-radius:14px;padding:13px 16px;box-shadow:var(--shadow-sheet);
+  max-width:400px;display:flex;gap:11px;align-items:flex-start}
+.toast-dot{width:8px;height:8px;border-radius:50%;background:var(--amber600);margin-top:7px;flex-shrink:0}
+.toast-t{font-size:14px;font-weight:500}
+.toast-s{font-size:13px;color:var(--text2);font-family:'IBM Plex Sans',sans-serif;margin-top:2px}
+
+/* بطاقة الاختتام */
+.sheet{background:var(--card);border-radius:20px;box-shadow:var(--shadow-sheet);overflow:hidden;max-width:480px}
+.sheet-head{padding:20px 22px 14px;text-align:center}
+.sheet-grip{width:36px;height:5px;border-radius:99px;background:var(--sep);margin:0 auto 14px}
+
+.type-row{display:flex;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid var(--sep)}
+.type-row:last-child{border:none}
+.type-spec{font-size:11.5px;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;width:96px;flex-shrink:0}
+
+.foot{margin-top:64px;padding-top:22px;border-top:1px solid var(--sep);
+  text-align:center;font-size:12px;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;letter-spacing:.03em}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 120 120" fill="none">
+      <rect width="120" height="120" rx="27" fill="#0B0B0D"/>
+      <g stroke="#1FA8F8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M84 22 L108 60 L84 98 L36 98 L12 60 L36 22 Z" opacity=".92"/>
+        <path d="M84 60 L96 47 M84 60 L96 73 M96 47 L96 73"/>
+      </g>
+      <g fill="#1FA8F8">
+        <circle cx="84" cy="22" r="5"/><circle cx="108" cy="60" r="5"/><circle cx="84" cy="98" r="5"/>
+        <circle cx="36" cy="98" r="5"/><circle cx="12" cy="60" r="5"/><circle cx="36" cy="22" r="5"/>
+        <circle cx="96" cy="47" r="4"/><circle cx="96" cy="73" r="4"/>
+      </g>
+      <path d="M12 60 H38 L45 60 L51 42 L58 80 L65 52 L70 60 H84" stroke="#F6F8FB" stroke-width="4"
+            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="84" cy="60" r="5" fill="#F6F8FB"/>
+    </svg>
+    <div>
+      <div class="brand-name">Vitalis</div>
+      <div class="brand-sub">Design System</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <button class="mode-btn" onclick="document.documentElement.classList.toggle('dark');this.textContent=document.documentElement.classList.contains('dark')?'الوضع الفاتح':'الوضع الداكن'">الوضع الداكن</button>
+</div></div>
+
+<div class="wrap">
+
+<h1>نظام التصميم البصري</h1>
+<p class="lead">Vitalis — نظام إدارة عيادة جراحة عامة · على نهج Apple في الوضوح والتنحّي والعمق</p>
+
+<!-- ═══ الألوان ═══ -->
+<h2>لوحة الألوان — مشتقة من اللوغو</h2>
+<div class="grid g4">
+  <div class="sw"><div class="sw-chip" style="background:#1FA8F8"></div><div class="sw-txt"><div class="sw-name">الأزرق الأساسي</div><div class="sw-hex">#1FA8F8</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#0E90DE"></div><div class="sw-txt"><div class="sw-name">أزرق التفاعل</div><div class="sw-hex">#0E90DE</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#0B0B0D"></div><div class="sw-txt"><div class="sw-name">الأسود العميق</div><div class="sw-hex">#0B0B0D</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#F6F8FB;border:1px solid #E3E4E9"></div><div class="sw-txt"><div class="sw-name">الأبيض المزرق</div><div class="sw-hex">#F6F8FB</div></div></div>
+</div>
+<div class="grid g4" style="margin-top:14px">
+  <div class="sw"><div class="sw-chip" style="background:#0E9F6E"></div><div class="sw-txt"><div class="sw-name">مدفوع · مكتمل</div><div class="sw-hex">#0E9F6E</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#B54708"></div><div class="sw-txt"><div class="sw-name">دين · معلّق</div><div class="sw-hex">#B54708</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#D92D20"></div><div class="sw-txt"><div class="sw-name">تحذير طبي</div><div class="sw-hex">#D92D20</div></div></div>
+  <div class="sw"><div class="sw-chip" style="background:#667085"></div><div class="sw-txt"><div class="sw-name">محايد</div><div class="sw-hex">#667085</div></div></div>
+</div>
+<p class="note">الأحمر محجوز للتحذيرات الطبية والحذف فقط. لو استُخدم في كل خطأ إدخال لفقد قوته حين نحتاجه فعلًا.</p>
+
+<!-- ═══ الخطوط ═══ -->
+<h2>الخطوط — IBM Plex Sans Arabic</h2>
+<div class="group group-pad">
+  <div class="type-row"><span class="type-spec">32 / 700</span><span style="font-size:32px;font-weight:700;letter-spacing:-.02em">عيادة الدكتور [اسم الطبيب]</span></div>
+  <div class="type-row"><span class="type-spec">24 / 600</span><span style="font-size:24px;font-weight:600;letter-spacing:-.01em">سامر الأحمد · 42 سنة</span></div>
+  <div class="type-row"><span class="type-spec">17 / 600</span><span style="font-size:17px;font-weight:600">آخر زيارة — 24 تموز</span></div>
+  <div class="type-row"><span class="type-spec">15 / 400</span><span style="font-size:15px;line-height:1.75">ألم في البطن أسفل يمين منذ ثلاثة أيام، مترافق مع حرارة خفيفة وغثيان. الإيلام واضح بالجس العميق.</span></div>
+  <div class="type-row"><span class="type-spec">13.5 / 400</span><span style="font-size:13.5px;color:var(--text2)">طُلبت تحاليل ما قبل العملية — يراجع بالنتائج</span></div>
+  <div class="type-row"><span class="type-spec">أرقام جدولية</span><span class="money" style="font-size:20px">150,000 ل.س</span></div>
+</div>
+<p class="note">ارتفاع السطر في النص العربي 1.75 — الأقل من ذلك يجعل الفقرة تبدو مكدسة. الأرقام إنجليزية وجدولية لتصطف الخانات عموديًا في القوائم المالية.</p>
+
+<!-- ═══ المكونات ═══ -->
+<h2>المكونات</h2>
+<div class="grid g2">
+  <div class="group group-pad">
+    <h3>الأزرار</h3>
+    <p class="note" style="margin:0 0 14px">زر أساسي واحد لكل شاشة — البقية نصوص زرقاء.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary">إنهاء وطباعة</button>
+      <button class="btn btn-secondary">إنهاء فقط</button>
+      <button class="btn btn-quiet">لاحقًا</button>
+      <button class="btn btn-danger">حذف</button>
+    </div>
+  </div>
+  <div class="group group-pad">
+    <h3>الحقول</h3>
+    <p class="note" style="margin:0 0 14px">بلا حدود في السكون — حلقة زرقاء عند التركيز.</p>
+    <input class="field" placeholder="ابحث باسم المريض أو رقمه…" style="margin-bottom:9px">
+    <input class="field" value="50,000" style="font-family:'IBM Plex Sans';font-variant-numeric:tabular-nums">
+  </div>
+</div>
+
+<div class="grid g2" style="margin-top:14px">
+  <div class="group group-pad">
+    <h3>الشارات</h3>
+    <p class="note" style="margin:0 0 14px">كل شارة معها نص — اللون وحده لا يحمل معنى.</p>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <span class="badge b-green">✓ مدفوع</span>
+      <span class="badge b-amber">دين 20,000</span>
+      <span class="badge b-blue">عند الطبيب</span>
+      <span class="badge b-gray">لم يصل</span>
+      <span class="badge b-amber">⏳ نتيجة معلّقة</span>
+    </div>
+    <div class="alert" style="margin-top:14px">⚠ حساسية بنسلين · مميعات دم</div>
+  </div>
+  <div class="group group-pad">
+    <h3>التحكم</h3>
+    <p class="note" style="margin:0 0 14px">مقاطع لا ألسنة · مفاتيح لا مربعات.</p>
+    <div class="seg">
+      <button class="on">اليوم</button><button>التقويم</button><button>الاتصالات</button>
+    </div>
+    <div class="row" style="padding:16px 0 0">
+      <div class="row-main">
+        <div class="row-title">قفل الشاشة تلقائيًا</div>
+        <div class="row-sub">بعد 3 دقائق من الخمول</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ شاشة الطبيب ═══ -->
+<h2>شاشة الطبيب — ملف المريض</h2>
+<div class="mock">
+  <div class="mock-chrome">
+    <div class="dot" style="background:#FF5F57"></div>
+    <div class="dot" style="background:#FEBC2E"></div>
+    <div class="dot" style="background:#28C840"></div>
+    <span class="mock-title">Vitalis — MacBook الطبيب</span>
+  </div>
+  <div class="mock-body">
+    <div class="main">
+      <div class="pt-head">
+        <span class="pt-name">سامر الأحمد</span>
+        <span class="pt-meta">42 سنة · 0991234567</span>
+      </div>
+      <div class="alert" style="margin-top:9px">⚠ حساسية بنسلين · مميعات دم</div>
+
+      <div class="card-mini" style="display:flex;align-items:center;gap:10px">
+        <span class="badge b-blue">📁 فتق إربي أيمن</span>
+        <span style="font-size:13px;color:var(--text2)">مفتوحة منذ 20 يومًا</span>
+      </div>
+
+      <div class="card-mini">
+        <div class="card-label">آخر زيارة — 24 تموز · مراجعة</div>
+        <div class="quote">طلبت تحاليل ما قبل العملية. يراجع بالنتائج خلال أسبوع.</div>
+        <div style="margin-top:10px"><span class="badge b-amber">⏳ طلب خارجي — لم تصل النتيجة</span></div>
+      </div>
+
+      <div class="card-mini">
+        <div class="card-label">✎ التقاط سريع — الزيارة الجارية</div>
+        <textarea class="field" style="background:transparent;padding:0;min-height:74px">أحضر التحاليل — الخضاب 13.2، التخثر طبيعي
+الجرح القديم سليم
+مؤهل للعملية — نحدد موعدًا</textarea>
+        <div style="display:flex;gap:6px;margin-top:11px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text2)">شكوى</button>
+          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text2)">فحص</button>
+          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text2)">تشخيص</button>
+          <button class="btn btn-sm" style="background:var(--surface2);color:var(--text2)">خطة</button>
+          <span style="flex:1"></span>
+          <button class="btn btn-sm btn-primary">إنهاء الزيارة</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="side-label">اليوم · السبت 8 آب</div>
+      <div class="side-item"><span class="side-time">9:00</span><span>أحمد عيسى</span></div>
+      <div class="side-item on"><span class="side-time">9:30</span><span>سامر الأحمد</span></div>
+      <div class="side-item"><span class="side-time">10:00</span><span>سلمى حداد</span></div>
+      <div class="side-item"><span class="side-time">10:30</span><span>يوسف مراد</span></div>
+      <div class="side-label">المتابعة</div>
+      <div class="side-item"><span>⏳ تحتاج انتباهك</span><span class="side-count">3</span></div>
+    </div>
+  </div>
+</div>
+<p class="note">«آخر زيارة» مفتوحة ومقروءة بصفر نقرات — تحلّ نقطة الاحتكاك الأهم: «ماذا قلت لهذا المريض آخر مرة؟» · التحذيرات الطبية لا تُطوى أبدًا.</p>
+
+<!-- ═══ شاشة السكرتيرة ═══ -->
+<h2>شاشة السكرتيرة — لوحة اليوم</h2>
+<div class="mock">
+  <div class="mock-chrome">
+    <div class="dot" style="background:#FF5F57"></div>
+    <div class="dot" style="background:#FEBC2E"></div>
+    <div class="dot" style="background:#28C840"></div>
+    <span class="mock-title">Vitalis — جهاز الاستقبال</span>
+  </div>
+  <div class="mock-body">
+    <div class="main">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+        <div>
+          <div style="font-size:24px;font-weight:700;letter-spacing:-.02em">اليوم</div>
+          <div style="font-size:13.5px;color:var(--text2)">السبت 8 آب · 7 مرضى · 3 انتهوا</div>
+        </div>
+        <span style="flex:1"></span>
+        <button class="btn btn-primary btn-sm">+ مريض جديد</button>
+      </div>
+
+      <div class="sec-group-title" style="color:var(--amber600)">⚠ انتهى — لم يُحاسب (1)</div>
+      <div class="group">
+        <div class="sec-row">
+          <span class="sec-time">8:30</span>
+          <span class="sec-name">ريم خوري</span>
+          <span class="badge b-gray">كشف</span>
+          <span class="money">50,000</span>
+          <button class="btn btn-sm btn-primary">قبض</button>
+        </div>
+      </div>
+
+      <div class="sec-group-title">● في الانتظار (2) — اسحب لترتيب الدور</div>
+      <div class="group">
+        <div class="sec-row">
+          <span class="drag">⠿</span><span class="sec-time">9:30</span>
+          <span class="sec-name">سامر الأحمد</span>
+          <span class="badge b-blue">مراجعة</span>
+          <span style="font-size:12.5px;color:var(--text3)">ينتظر 12 د</span>
+        </div>
+        <div class="sec-row">
+          <span class="drag">⠿</span><span class="sec-time">10:00</span>
+          <span class="sec-name">سلمى حداد</span>
+          <span class="badge b-gray">كشف</span>
+          <span style="font-size:12.5px;color:var(--text3)">ينتظر 4 د</span>
+        </div>
+      </div>
+
+      <div class="sec-group-title">◐ عند الطبيب (1)</div>
+      <div class="group">
+        <div class="sec-row">
+          <span class="sec-time">9:00</span>
+          <span class="sec-name">أحمد عيسى</span>
+          <span class="badge b-blue">ضماد</span>
+          <span class="badge b-green">مشمول</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="side-item on">● اليوم</div>
+      <div class="side-item">📅 التقويم</div>
+      <div class="side-item">☎ اتصالات الغد<span class="side-count" style="background:var(--blue600)">5</span></div>
+      <div class="side-item">💰 الصندوق</div>
+      <div class="side-item">📋 الديون<span class="side-count">4</span></div>
+    </div>
+  </div>
+</div>
+<p class="note">«انتهى — لم يُحاسب» أعلى القائمة قبل من لم يصل بعد، لأنه أكثر ما يُنسى في العيادات · القبض بنقرة واحدة من مكانه · ترتيب الدور بالسحب لأن السكرتيرة ترى الصالة والنظام لا يراها.</p>
+
+<!-- ═══ بطاقة الاختتام ═══ -->
+<h2>بطاقة الاختتام — قلب النظام</h2>
+<div class="grid g2" style="align-items:start">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sheet-grip"></div>
+      <h3>إنهاء زيارة سامر الأحمد</h3>
+      <p style="font-size:13px;color:var(--text2)">مراجعة · السبت 8 آب</p>
+    </div>
+    <div class="row">
+      <div class="row-main"><div class="row-title">💊 الوصفة</div><div class="row-sub">اختياري</div></div>
+      <button class="btn btn-sm btn-secondary">+ إضافة</button>
+    </div>
+    <div class="row">
+      <div class="row-main"><div class="row-title">🧪 طلبات خارجية</div><div class="row-sub">اختياري</div></div>
+      <button class="btn btn-sm btn-secondary">+ إضافة</button>
+    </div>
+    <div class="row">
+      <div class="row-main"><div class="row-title">📅 الموعد القادم</div><div class="row-sub">اقتراح ذكي</div></div>
+      <span class="badge b-blue">بعد أسبوع</span>
+    </div>
+    <div class="row">
+      <div class="row-main"><div class="row-title">💰 المبلغ المستحق</div><div class="row-sub" style="color:var(--red600)">إلزامي — لا يمكن تركه فارغًا</div></div>
+      <input class="field" value="50,000" style="width:118px;text-align:center;font-family:'IBM Plex Sans';font-variant-numeric:tabular-nums;font-weight:600">
+    </div>
+    <div style="padding:16px 20px;display:flex;gap:8px;align-items:center">
+      <button class="btn btn-primary" style="flex:1">إنهاء وطباعة</button>
+      <button class="btn btn-secondary">إنهاء فقط</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="group group-pad">
+      <h3>الإشعار الصامت</h3>
+      <p class="note" style="margin:0 0 14px">يخبر ولا يطلب · بلا صوت · بلا حجب · ينزوي بعد 6 ثوانٍ ولا يضيع</p>
+      <div class="toast">
+        <div class="toast-dot"></div>
+        <div>
+          <div class="toast-t">ريم خوري — قبض ناقص</div>
+          <div class="toast-s">المستحق 50,000 · قُبض 30,000 · الفرق 20,000</div>
+        </div>
+      </div>
+    </div>
+    <div class="group group-pad" style="margin-top:14px">
+      <h3>لماذا المبلغ إلزامي؟</h3>
+      <p class="note" style="margin:0">لأن سعر الزيارة يُقرَّر يدويًا في كل مرة، فنسيانه يشلّ السكرتيرة أمام المريض. النظام يقترح آخر مبلغ استخدمته لحالة مشابهة، ويقبل الصفر (مجانًا) — لكنه لا يقبل الفراغ.</p>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  Vitalis · تصميم د. علاء شاكر — حماة، سوريا
+</div>
+
+</div>
+</body>
+</html>
